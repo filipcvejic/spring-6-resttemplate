@@ -4,6 +4,7 @@ import guru.springframework.spring7resttemplate.model.BeerDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.restclient.RestTemplateBuilder;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -25,19 +26,8 @@ public class BeerClientImpl implements BeerClient {
     public Page<BeerDTO> listBeers() {
         RestTemplate restTemplate = restTemplateBuilder.build();
 
-        ResponseEntity<String> stringResponse =
-                restTemplate.getForEntity(BASE_URL + GET_BEER_PATH, String.class);
-
-        ResponseEntity<Map> mapResponse =
-                restTemplate.getForEntity(BASE_URL + GET_BEER_PATH, Map.class);
-
-        ResponseEntity<JsonNode> jsonResponse =
-                restTemplate.getForEntity(BASE_URL + GET_BEER_PATH, JsonNode.class);
-
-        jsonResponse.getBody().findPath("content")
-                .values().forEach(node -> {
-                    System.out.println(node.get("beerName").asString());
-                });
+        ResponseEntity<PageImpl> stringResponse =
+                restTemplate.getForEntity(BASE_URL + GET_BEER_PATH, PageImpl.class)
 
         System.out.println(stringResponse.getBody());
 
