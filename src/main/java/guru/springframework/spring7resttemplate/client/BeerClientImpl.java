@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.databind.JsonNode;
+
 
 import java.util.Map;
 
@@ -28,6 +30,14 @@ public class BeerClientImpl implements BeerClient {
 
         ResponseEntity<Map> mapResponse =
                 restTemplate.getForEntity(BASE_URL + GET_BEER_PATH, Map.class);
+
+        ResponseEntity<JsonNode> jsonResponse =
+                restTemplate.getForEntity(BASE_URL + GET_BEER_PATH, JsonNode.class);
+
+        jsonResponse.getBody().findPath("content")
+                .values().forEach(node -> {
+                    System.out.println(node.get("beerName").asString());
+                });
 
         System.out.println(stringResponse.getBody());
 
