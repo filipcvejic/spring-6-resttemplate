@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import tools.jackson.databind.JsonNode;
 
 
@@ -25,8 +26,10 @@ public class BeerClientImpl implements BeerClient {
     public Page<BeerDTO> listBeers() {
         RestTemplate restTemplate = restTemplateBuilder.build();
 
+        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromPath(GET_BEER_PATH);
+
         ResponseEntity<PageImpl> response =
-                restTemplate.getForEntity(GET_BEER_PATH, PageImpl.class);
+                restTemplate.getForEntity(uriComponentsBuilder.toUriString(), PageImpl.class);
 
         System.out.println(response.getBody());
 
