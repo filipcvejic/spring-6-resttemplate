@@ -16,6 +16,13 @@ public class BeerClientImpl implements BeerClient {
 
     @Override
     public Page<BeerDTO> listBeers() {
+        RestTemplate restTemplate = restTemplateBuilder.build();
+
+        ResponseEntity<String> stringResponse =
+                restTemplate.getForEntity("http://localhost:8080/api/v1/beer", String.class);
+
+        System.out.println(stringResponse.getBody());
+
         return null;
     }
 }
