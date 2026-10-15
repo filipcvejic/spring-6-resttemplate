@@ -21,13 +21,13 @@ public class BeerClientImpl implements BeerClient {
     private final RestTemplateBuilder restTemplateBuilder;
 
     public static final String GET_BEER_PATH = "/api/v1/beer";
-    public static final String GET_BEER_BY_ID = "/api/v1/beer/{beerId}";
+    public static final String GET_BEER_BY_ID_PATH = "/api/v1/beer/{beerId}";
 
     @Override
     public BeerDTO getBeerById(UUID beerId) {
         RestTemplate restTemplate = restTemplateBuilder.build();
 
-        return restTemplate.getForObject(GET_BEER_BY_ID, BeerDTO.class, beerId);
+        return restTemplate.getForObject(GET_BEER_BY_ID_PATH, BeerDTO.class, beerId);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class BeerClientImpl implements BeerClient {
     public BeerDTO updateBeer(BeerDTO beerDto) {
         RestTemplate restTemplate = restTemplateBuilder.build();
 
-        restTemplate.put(GET_BEER_BY_ID, beerDto, beerDto.getId());
+        restTemplate.put(GET_BEER_BY_ID_PATH, beerDto, beerDto.getId());
 
         return getBeerById(beerDto.getId());
     }
@@ -52,7 +52,7 @@ public class BeerClientImpl implements BeerClient {
     public void deleteBeer(UUID beerId) {
         RestTemplate restTemplate = restTemplateBuilder.build();
 
-        restTemplate.delete(GET_BEER_BY_ID, beerId);
+        restTemplate.delete(GET_BEER_BY_ID_PATH, beerId);
     }
 
     @Override
