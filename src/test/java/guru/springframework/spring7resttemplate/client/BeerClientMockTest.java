@@ -50,18 +50,21 @@ public class BeerClientMockTest {
     @Mock
     RestTemplateBuilder mockRestTemplateBuilder = new RestTemplateBuilder(new MockServerRestTemplateCustomizer());
 
+    BeerDTO dto;
+    String dtoJson;
+
     @BeforeEach
     void setUp() {
         RestTemplate restTemplate = restTemplateBuilderConfigured.build();
         server = MockRestServiceServer.bindTo(restTemplate).build();
         when(mockRestTemplateBuilder.build()).thenReturn(restTemplate);
         beerClient = new BeerClientImpl(mockRestTemplateBuilder);
+        dto = getBeerDto();
+        dtoJson = objectMapper.writeValueAsString(dto);
     }
 
     @Test
     void testCreateBeer() {
-        BeerDTO dto = getBeerDto();
-        String response = objectMapper.writeValueAsString(dto);
         URI uri = UriComponentsBuilder.fromPath(BeerClientImpl.GET_BEER_BY_ID)
                         .build(dto.getId());
 
@@ -71,7 +74,7 @@ public class BeerClientMockTest {
 
         server.expect(method(HttpMethod.GET))
                 .andExpect(requestToUriTemplate(URL + BeerClientImpl.GET_BEER_BY_ID, dto.getId()))
-                .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess(dtoJson, MediaType.APPLICATION_JSON));
 
         BeerDTO responseDTO = beerClient.createBeer(dto);
         assertThat(responseDTO.getId()).isEqualTo(dto.getId());
@@ -79,13 +82,9 @@ public class BeerClientMockTest {
 
     @Test
     void testGetBeerById() {
-        BeerDTO dto = getBeerDto();
-
-        String response = objectMapper.writeValueAsString(dto);
-
         server.expect(method(HttpMethod.GET))
                 .andExpect(requestToUriTemplate(URL + BeerClientImpl.GET_BEER_BY_ID, dto.getId()))
-                .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess(dtoJson, MediaType.APPLICATION_JSON));
 
         BeerDTO responseDTO = beerClient.getBeerById(dto.getId());
         assertThat(responseDTO.getId()).isEqualTo(dto.getId());
@@ -93,11 +92,9 @@ public class BeerClientMockTest {
 
     @Test
     void testListBeers() {
-        String payload = objectMapper.writeValueAsString(getPage());
-
         server.expect(method(HttpMethod.GET))
                 .andExpect(requestTo(URL + BeerClientImpl.GET_BEER_PATH))
-                .andRespond(withSuccess(payload, MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess(dtoJson, MediaType.APPLICATION_JSON));
 
         Page<BeerDTO> dtos = beerClient.listBeers();
         assertThat(dtos.getContent().size()).isGreaterThan(0);
