@@ -56,6 +56,20 @@ public class BeerClientMockTest {
     }
 
     @Test
+    void testGetBeerById() {
+        BeerDTO dto = getBeerDto();
+
+        String response = objectMapper.writeValueAsString(dto);
+
+        server.expect(method(HttpMethod.GET))
+                .andExpect(requestToUriTemplate(URL + BeerClientImpl.GET_BEER_BY_ID, dto.getId()))
+                .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
+
+        BeerDTO responseDTO = beerClient.getBeerById(dto.getId());
+        assertThat(responseDTO.getId()).isEqualTo(dto.getId());
+    }
+
+    @Test
     void testListBeers() {
         String payload = objectMapper.writeValueAsString(getPage());
 
